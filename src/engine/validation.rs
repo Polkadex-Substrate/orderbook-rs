@@ -1,5 +1,7 @@
 
 use std::fmt::Debug;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::Zero;
 
 use super::orders::OrderRequest;
 
@@ -77,7 +79,7 @@ where
         &self,
         order_asset: Asset,
         price_asset: Asset,
-        qty: f64,
+        qty: Decimal,
     ) -> Result<(), &str> {
 
         if self.orderbook_order_asset != order_asset {
@@ -88,7 +90,7 @@ where
             return Err(ERR_BAD_PRICE_ASSET);
         }
 
-        if qty <= 0.0 {
+        if qty <= Decimal::zero() {
             return Err(ERR_BAD_QUANTITY_VALUE);
         }
 
@@ -100,8 +102,8 @@ where
         &self,
         order_asset: Asset,
         price_asset: Asset,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
     ) -> Result<(), &str> {
 
         if self.orderbook_order_asset != order_asset {
@@ -112,11 +114,11 @@ where
             return Err(ERR_BAD_PRICE_ASSET);
         }
 
-        if price <= 0.0 {
+        if price <= Decimal::zero() {
             return Err(ERR_BAD_PRICE_VALUE);
         }
 
-        if qty <= 0.0 {
+        if qty <= Decimal::zero() {
             return Err(ERR_BAD_QUANTITY_VALUE);
         }
 
@@ -124,16 +126,16 @@ where
     }
 
 
-    fn validate_amend(&self, id: u64, price: f64, qty: f64) -> Result<(), &str> {
+    fn validate_amend(&self, id: u64, price: Decimal, qty: Decimal) -> Result<(), &str> {
         if self.min_sequence_id > id || self.max_sequence_id < id {
             return Err(ERR_BAD_SEQ_ID);
         }
 
-        if price <= 0.0 {
+        if price <= Decimal::from(0) {
             return Err(ERR_BAD_PRICE_VALUE);
         }
 
-        if qty <= 0.0 {
+        if qty <= Decimal::from(0) {
             return Err(ERR_BAD_QUANTITY_VALUE);
         }
 

@@ -1,4 +1,3 @@
-
 mod engine;
 
 pub use engine::domain::OrderSide;
@@ -8,12 +7,13 @@ pub use engine::orders;
 
 #[cfg(test)]
 mod tests {
+    use rust_decimal::Decimal;
+    use rust_decimal::prelude::FromPrimitive;
     use super::*;
 
-    const FLOAT_THRESHOLD: f64 = 1e-6;
 
-    fn match_float(expected: f64, get: f64) -> bool {
-        if (expected - get).abs() < FLOAT_THRESHOLD {
+    fn match_float(expected: Decimal, get: Decimal) -> bool {
+        if (expected - get).abs() < Decimal::from_f64(1e-6).unwrap() {
             true
         } else {
             false
@@ -50,7 +50,7 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Bid,
-            2.0,
+            Decimal::from_f64(2.0).unwrap(),
             SystemTime::now(),
         );
 
@@ -83,8 +83,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Bid,
-            10.0,
-            1.0,
+            Decimal::from_f64(10.0).unwrap(),
+            Decimal::from_f64(1.0).unwrap(),
             SystemTime::now(),
         );
 
@@ -92,7 +92,7 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Ask,
-            0.5,
+            Decimal::from_f64(0.5).unwrap(),
             SystemTime::now(),
         );
 
@@ -109,7 +109,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             } ||
             !match res[2] {
@@ -118,7 +118,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             }
         {
@@ -139,8 +139,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Bid,
-            10.0,
-            1.0,
+            Decimal::from_f64(10.0).unwrap(),
+            Decimal::from_f64(1.0).unwrap(),
             SystemTime::now(),
         );
 
@@ -148,8 +148,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Bid,
-            12.0,
-            1.0,
+            Decimal::from_f64(12.0).unwrap(),
+            Decimal::from_f64(1.0).unwrap(),
             SystemTime::now(),
         );
 
@@ -157,7 +157,7 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Ask,
-            1.5,
+            Decimal::from_f64(1.5).unwrap(),
             SystemTime::now(),
         );
 
@@ -175,7 +175,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 12.0) && match_float(qty, 1.0) => true,
+                   }) if match_float(price, Decimal::from_f64(12.0).unwrap()) && match_float(qty, Decimal::from_f64(1.0).unwrap()) => true,
                 _ => false,
             } ||
             !match res[2] {
@@ -184,7 +184,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 12.0) && match_float(qty, 1.0) => true,
+                   }) if match_float(price, Decimal::from_f64(12.0).unwrap()) && match_float(qty, Decimal::from_f64(1.0).unwrap()) => true,
                 _ => false,
             } ||
             !match res[3] {
@@ -193,7 +193,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             } ||
             !match res[4] {
@@ -202,7 +202,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             }
         {
@@ -223,8 +223,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Bid,
-            10.0,
-            2.0,
+            Decimal::from_f64(10.0).unwrap(),
+            Decimal::from_f64(2.0).unwrap(),
             SystemTime::now(),
         );
 
@@ -253,8 +253,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Bid,
-            10.0,
-            1.0,
+            Decimal::from_f64(10.0).unwrap(),
+            Decimal::from_f64(1.0).unwrap(),
             SystemTime::now(),
         );
 
@@ -262,8 +262,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Ask,
-            9.0,
-            0.5,
+            Decimal::from_f64(9.0).unwrap(),
+            Decimal::from_f64(0.5).unwrap(),
             SystemTime::now(),
         );
 
@@ -280,7 +280,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             } ||
             !match res[2] {
@@ -289,7 +289,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             }
         {
@@ -310,8 +310,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Bid,
-            10.0,
-            1.0,
+            Decimal::from_f64(10.0).unwrap(),
+            Decimal::from_f64(1.0).unwrap(),
             SystemTime::now(),
         );
 
@@ -319,8 +319,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Ask,
-            9.0,
-            0.5,
+            Decimal::from_f64(9.0).unwrap(),
+            Decimal::from_f64(0.5).unwrap(),
             SystemTime::now(),
         );
 
@@ -337,7 +337,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             } ||
             !match res[2] {
@@ -346,7 +346,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             }
         {
@@ -357,8 +357,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Ask,
-            8.0,
-            0.5,
+            Decimal::from_f64(8.0).unwrap(),
+            Decimal::from_f64(0.5).unwrap(),
             SystemTime::now(),
         );
 
@@ -374,7 +374,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             } ||
             !match res2[2] {
@@ -383,7 +383,7 @@ mod tests {
                        price,
                        qty,
                        ..
-                   }) if match_float(price, 10.0) && match_float(qty, 0.5) => true,
+                   }) if match_float(price, Decimal::from_f64(10.0).unwrap()) && match_float(qty, Decimal::from_f64(0.5).unwrap()) => true,
                 _ => false,
             }
         {
@@ -406,8 +406,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Bid,
-            10.0,
-            1.0,
+            Decimal::from_f64(10.0).unwrap(),
+            Decimal::from_f64(1.0).unwrap(),
             SystemTime::now(),
         );
 
@@ -418,8 +418,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Ask,
-            12.0,
-            0.5,
+            Decimal::from_f64(12.0).unwrap(),
+            Decimal::from_f64(0.5).unwrap(),
             SystemTime::now(),
         );
 
@@ -427,8 +427,8 @@ mod tests {
             order_asset,
             price_asset,
             OrderSide::Ask,
-            12.5,
-            2.5,
+            Decimal::from_f64(12.5).unwrap(),
+            Decimal::from_f64(2.5).unwrap(),
             SystemTime::now(),
         );
 
@@ -436,20 +436,20 @@ mod tests {
         orderbook.process_order(order2);
         orderbook.process_order(order3);
 
-        assert_eq!(orderbook.current_spread(), Some((10.0, 12.0)));
+        assert_eq!(orderbook.current_spread(), Some((Decimal::from_f64(10.0).unwrap(), Decimal::from_f64(12.0).unwrap())));
 
         // wider spread
         let order4 = orders::new_limit_order_request(
             order_asset,
             price_asset,
             OrderSide::Bid,
-            14.0,
-            1.5,
+            Decimal::from_f64(14.0).unwrap(),
+            Decimal::from_f64(1.5).unwrap(),
             SystemTime::now(),
         );
         let res = orderbook.process_order(order4);
         println!("{:?}", res);
 
-        assert_eq!(orderbook.current_spread(), Some((10.0, 12.5)));
+        assert_eq!(orderbook.current_spread(), Some((Decimal::from_f64(10.0).unwrap(), Decimal::from_f64(12.5).unwrap())));
     }
 }

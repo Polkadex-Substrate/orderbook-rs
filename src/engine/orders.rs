@@ -1,6 +1,7 @@
 
 use std::time::SystemTime;
 use std::fmt::Debug;
+use rust_decimal::Decimal;
 
 use super::domain::OrderSide;
 
@@ -14,7 +15,7 @@ where
         order_asset: Asset,
         price_asset: Asset,
         side: OrderSide,
-        qty: f64,
+        qty: Decimal,
         ts: SystemTime,
     },
 
@@ -22,16 +23,16 @@ where
         order_asset: Asset,
         price_asset: Asset,
         side: OrderSide,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
         ts: SystemTime,
     },
 
     AmendOrder {
         id: u64,
         side: OrderSide,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
         ts: SystemTime,
     },
 
@@ -51,7 +52,7 @@ pub fn new_market_order_request<Asset>(
     order_asset: Asset,
     price_asset: Asset,
     side: OrderSide,
-    qty: f64,
+    qty: Decimal,
     ts: SystemTime,
 ) -> OrderRequest<Asset>
 where
@@ -73,8 +74,8 @@ pub fn new_limit_order_request<Asset>(
     order_asset: Asset,
     price_asset: Asset,
     side: OrderSide,
-    price: f64,
-    qty: f64,
+    price: Decimal,
+    qty: Decimal,
     ts: SystemTime,
 ) -> OrderRequest<Asset>
 where
@@ -99,8 +100,8 @@ where
 pub fn amend_order_request<Asset>(
     id: u64,
     side: OrderSide,
-    price: f64,
-    qty: f64,
+    price: Decimal,
+    qty: Decimal,
     ts: SystemTime,
 ) -> OrderRequest<Asset>
 where

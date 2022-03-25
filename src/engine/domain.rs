@@ -1,5 +1,6 @@
 
 use std::fmt::Debug;
+use rust_decimal::Decimal;
 
 #[derive(Debug, Copy, Clone)]
 pub enum OrderSide {
@@ -16,8 +17,8 @@ where
     pub order_asset: Asset,
     pub price_asset: Asset,
     pub side: OrderSide,
-    pub price: f64,
-    pub qty: f64,
+    pub price: Decimal,
+    pub qty: Decimal,
 }
 
 

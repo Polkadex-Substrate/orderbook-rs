@@ -1,7 +1,10 @@
 
 extern crate orderbook;
+extern crate rust_decimal;
 
 use std::time::SystemTime;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::FromPrimitive;
 use orderbook::{Orderbook, OrderSide, orders};
 
 
@@ -37,8 +40,8 @@ fn main() {
                 order_asset,
                 price_asset,
                 OrderSide::Bid,
-                0.98,
-                5.0,
+                Decimal::from_f64(0.98).unwrap(),
+                Decimal::from_f64(5.0).unwrap(),
                 SystemTime::now()
             ),
 
@@ -46,19 +49,20 @@ fn main() {
                 order_asset,
                 price_asset,
                 OrderSide::Ask,
-                1.02,
-                1.0,
+                Decimal::from_f64(1.02).unwrap(),
+                Decimal::from_f64(1.0).unwrap(),
                 SystemTime::now()
             ),
 
-            orders::amend_order_request(1, OrderSide::Bid, 0.99, 4.0, SystemTime::now()),
+            orders::amend_order_request(1, OrderSide::Bid, Decimal::from_f64(0.99).unwrap(),
+                                        Decimal::from_f64(4.0).unwrap(), SystemTime::now()),
 
             orders::new_limit_order_request(
                 order_asset,
                 price_asset,
                 OrderSide::Bid,
-                1.01,
-                0.4,
+                Decimal::from_f64(1.01).unwrap(),
+                Decimal::from_f64(0.4).unwrap(),
                 SystemTime::now()
             ),
 
@@ -66,19 +70,19 @@ fn main() {
                 order_asset,
                 price_asset,
                 OrderSide::Ask,
-                1.03,
-                0.5,
+                Decimal::from_f64(1.03).unwrap(),
+                Decimal::from_f64(0.5).unwrap(),
                 SystemTime::now()
             ),
 
-            orders::new_market_order_request(order_asset, price_asset, OrderSide::Bid, 1.0, SystemTime::now()),
+            orders::new_market_order_request(order_asset, price_asset, OrderSide::Bid, Decimal::from_f64(1.0).unwrap(), SystemTime::now()),
 
             orders::new_limit_order_request(
                 order_asset,
                 price_asset,
                 OrderSide::Ask,
-                1.05,
-                0.5,
+                Decimal::from_f64(1.05).unwrap(),
+                Decimal::from_f64(0.5).unwrap(),
                 SystemTime::now()
             ),
 
@@ -88,8 +92,8 @@ fn main() {
                 order_asset,
                 price_asset,
                 OrderSide::Bid,
-                1.06,
-                0.6,
+                Decimal::from_f64(1.06).unwrap(),
+                Decimal::from_f64(0.6).unwrap(),
                 SystemTime::now()
             ),
         ];

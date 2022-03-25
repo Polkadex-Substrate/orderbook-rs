@@ -12,9 +12,10 @@ impl TradeSequence {
         let next_id = self.current_idx;
 
         // update index
-        if (next_id + 1) <= self.max_id {
-            self.current_idx += 1;
+        if next_id.saturating_add(1) <= self.max_id {
+            self.current_idx = self.current_idx.saturating_add(1);
         } else {
+            log::error!(target:"orderbook","OrderID Overflow");
             self.current_idx = self.min_id;
         }
 

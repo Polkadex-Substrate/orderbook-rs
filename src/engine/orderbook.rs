@@ -1,6 +1,6 @@
-
 use std::time::SystemTime;
 use std::fmt::Debug;
+use rust_decimal::Decimal;
 
 
 use super::domain::{Order, OrderSide, OrderType};
@@ -11,7 +11,7 @@ use super::validation::OrderRequestValidator;
 
 
 const MIN_SEQUENCE_ID: u64 = 1;
-const MAX_SEQUENCE_ID: u64 = 1000;
+const MAX_SEQUENCE_ID: u64 = u64::MAX;
 const MAX_STALLED_INDICES_IN_QUEUE: u64 = 10;
 const ORDER_QUEUE_INIT_CAPACITY: usize = 500;
 
@@ -31,8 +31,8 @@ pub enum Success {
         order_id: u64,
         side: OrderSide,
         order_type: OrderType,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
         ts: SystemTime,
     },
 
@@ -40,15 +40,15 @@ pub enum Success {
         order_id: u64,
         side: OrderSide,
         order_type: OrderType,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
         ts: SystemTime,
     },
 
     Amended {
         id: u64,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
         ts: SystemTime,
     },
 
@@ -87,10 +87,27 @@ where
     /// # Examples
     ///
     /// Basic usage:
-    /// ```
+    /// ```no_run
+    /// use std::time::SystemTime;
+    /// use orderbook::{Orderbook, orders, OrderSide};
+    /// use orderbook::orders::OrderRequest;
+    /// use rust_decimal::Decimal;
+    /// use rust_decimal::prelude::FromPrimitive;
+    ///#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    /// pub enum Asset {
+    /// BTC,
+    /// USD
+    /// }
     /// let mut orderbook = Orderbook::new(Asset::BTC, Asset::USD);
-    /// let result = orderbook.process_order(OrderRequest::MarketOrder{  });
-    /// assert_eq!(orderbook)
+    /// let order = orders::new_market_order_request(
+    ///             Asset::BTC,
+    ///             Asset::USD,
+    ///             OrderSide::Bid,
+    ///             Decimal::from_f64(2.0).unwrap(),
+    ///             SystemTime::now(),
+    ///         );
+    /// let result = orderbook.process_order(order);
+    ///
     /// ```
     // todo fix doc test!
     pub fn new(order_asset: Asset, price_asset: Asset) -> Self {
@@ -202,7 +219,7 @@ where
 
 
     /// Get current spread as a tuple: (bid, ask)
-    pub fn current_spread(&mut self) -> Option<(f64, f64)> {
+    pub fn current_spread(&mut self) -> Option<(Decimal, Decimal)> {
         let bid = self.bid_queue.peek()?.price;
         let ask = self.ask_queue.peek()?.price;
         Some((bid, ask))
@@ -218,7 +235,7 @@ where
         order_asset: Asset,
         price_asset: Asset,
         side: OrderSide,
-        qty: f64,
+        qty: Decimal,
     ) {
         // get copy of the current limit order
         let opposite_order_result = {
@@ -267,8 +284,8 @@ where
         order_asset: Asset,
         price_asset: Asset,
         side: OrderSide,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
         ts: SystemTime,
     ) {
         // take a look at current opposite limit order
@@ -348,8 +365,8 @@ where
         results: &mut OrderProcessingResult,
         order_id: u64,
         side: OrderSide,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
         ts: SystemTime,
     ) {
         let order_queue = match side {
@@ -415,8 +432,8 @@ where
         order_asset: Asset,
         price_asset: Asset,
         side: OrderSide,
-        price: f64,
-        qty: f64,
+        price: Decimal,
+        qty: Decimal,
         ts: SystemTime,
     ) {
         let order_queue = match side {
@@ -451,7 +468,7 @@ where
         price_asset: Asset,
         order_type: OrderType,
         side: OrderSide,
-        qty: f64,
+        qty: Decimal,
     ) -> bool {
 
         // real processing time

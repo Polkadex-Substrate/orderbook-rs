@@ -2,6 +2,7 @@
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
 use std::time;
+use rust_decimal::Decimal;
 
 use super::domain::OrderSide;
 
@@ -9,7 +10,7 @@ use super::domain::OrderSide;
 #[derive(Clone)]
 struct OrderIndex {
     id: u64,
-    price: f64,
+    price: Decimal,
     timestamp: time::SystemTime,
     order_side: OrderSide,
 }
@@ -106,7 +107,7 @@ impl<T> OrderQueue<T> {
 
 
     // Add new limit order to the queue
-    pub fn insert(&mut self, id: u64, price: f64, ts: time::SystemTime, order: T) -> bool {
+    pub fn insert(&mut self, id: u64, price: Decimal, ts: time::SystemTime, order: T) -> bool {
         if self.orders.contains_key(&id) {
             // do not update existing order
             return false;
@@ -125,7 +126,7 @@ impl<T> OrderQueue<T> {
 
 
     // use it when price was changed
-    pub fn amend(&mut self, id: u64, price: f64, ts: time::SystemTime, order: T) -> bool {
+    pub fn amend(&mut self, id: u64, price: Decimal, ts: time::SystemTime, order: T) -> bool {
         if self.orders.contains_key(&id) {
             // store new order data
             self.orders.insert(id, order);
@@ -187,7 +188,7 @@ impl<T> OrderQueue<T> {
 
 
     /// Recreate order-index queue with changed index info
-    fn rebuild_idx(&mut self, id: u64, price: f64, ts: time::SystemTime) {
+    fn rebuild_idx(&mut self, id: u64, price: Decimal, ts: time::SystemTime) {
         if let Some(idx_queue) = self.idx_queue.take() {
             // deconstruct queue
             let mut active_orders = idx_queue.into_vec();
@@ -201,7 +202,7 @@ impl<T> OrderQueue<T> {
                 order_side: self.queue_side,
             });
             // construct new queue
-            let mut amended_queue = BinaryHeap::from(active_orders);
+            let amended_queue = BinaryHeap::from(active_orders);
             self.idx_queue = Some(amended_queue);
         }
     }
@@ -217,6 +218,7 @@ impl<T> OrderQueue<T> {
 
 #[cfg(test)]
 mod test {
+    use rust_decimal::prelude::FromPrimitive;
     use super::*;
 
     #[derive(Debug, Eq, PartialEq)]
@@ -235,20 +237,20 @@ mod test {
 
         assert!(bid_queue.insert(
             1,
-            1.01,
+            Decimal::from_f64(1.01).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "low bid" },
         ));
         assert!(bid_queue.insert(
             2,
-            1.02,
+            Decimal::from_f64(1.02).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "high bid first" },
         ));
         // same price but later
         assert!(bid_queue.insert(
             3,
-            1.02,
+            Decimal::from_f64(1.02).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "high bid second" },
         ));
@@ -262,19 +264,19 @@ mod test {
         let mut ask_queue = get_queue_empty(OrderSide::Ask);
         assert!(ask_queue.insert(
             1,
-            1.01,
+            Decimal::from_f64(1.01).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "low ask first" },
         ));
         assert!(ask_queue.insert(
             2,
-            1.02,
+            Decimal::from_f64(1.02).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "high ask" },
         ));
         assert!(ask_queue.insert(
             3,
-            1.01,
+            Decimal::from_f64(1.01).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "low ask second" },
         ));
@@ -292,7 +294,7 @@ mod test {
         // insert unique
         assert!(bid_queue.insert(
             1,
-            1.01,
+            Decimal::from_f64(1.01).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "first bid" },
         ));
@@ -300,7 +302,7 @@ mod test {
         // discard order with existing ID
         assert!(!bid_queue.insert(
             1,
-            1.02,
+            Decimal::from_f64(1.02).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "another first bid" },
         ));
@@ -349,20 +351,20 @@ mod test {
         // amend two orders in the queue
         assert!(ask_queue.amend(
             2,
-            0.99,
+            Decimal::from_f64(0.99).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "new first" },
         ));
         assert!(ask_queue.amend(
             1,
-            1.01,
+            Decimal::from_f64(1.01).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "new last" },
         ));
         // non-exist order
         assert!(!ask_queue.amend(
             4,
-            3.03,
+            Decimal::from_f64(3.03).unwrap(),
             time::SystemTime::now(),
             TestOrder { name: "nonexistent" },
         ));

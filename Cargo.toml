@@ -2,5 +2,8 @@
 name = "orderbook"
 version = "0.1.0"
 authors = ["Anton Dort-Golts <dortgolts@gmail.com>"]
+edition="2021"
 
 [dependencies]
+log = "0.4.16"
+rust_decimal = "1.22.0"
